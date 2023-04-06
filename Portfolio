@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>My Portfolio</title>
+  </head>
+  <body>
+    <!-- Home section -->
+    <section id="home">
+      <h1>Welcome to my portfolio</h1>
+      <p>Here, you'll find information about me and my work</p>
+    </section>
+
+    <!-- Services section -->
+    <section id="services">
+      <h2>My services</h2>
+      <ul>
+        <li>Web development</li>
+        <li>Graphic design</li>
+        <li>Digital marketing</li>
+      </ul>
+    </section>
+
+    <!-- Mail section -->
+    <section id="mail">
+      <h2>Contact me</h2>
+      <form>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br>
+
+        <label for="message">Message:</label>
+        <textarea id="message" name="message"></textarea><br>
+
+        <input type="submit" value="Submit">
+      </form>
+    </section>
+  </body>
+</html>
