@@ -329,6 +329,10 @@ Others:
 - [heygen-com/hyperframes-community-skills](https://github.com/heygen-com/hyperframes-community-skills): community HyperFrames workflows.
 - Creator-made kits worth watching: Nate Herk (YouTube), Hasan Aboul Hasan (YouTube), [Jakeschincariol/master-skills](https://github.com/Jakeschincariol/master-skills), [Melvynx/video-agent-skills](https://github.com/Melvynx/video-agent-skills).
 
+## Reel editor skill (built from real jobs)
+
+`.claude/skills/reel-editor/` is the working pipeline built and refined on real edits: reference breakdown, transcription, jump-cut detection, face-anchored camera, word-by-word face-safe captions, roto, cards, SFX and music, automated QA. It records Yogesh's feedback as hard rules. Claude Code loads it automatically in this repo.
+
 ## Install
 
 ```bash
