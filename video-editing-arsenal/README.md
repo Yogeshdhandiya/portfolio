@@ -11,6 +11,8 @@ Snapshot date: 2026-10-13. Star counts were taken from GitHub on that date.
 | `skills/` | Vendored copies of the winning skills. All are MIT or Apache-2.0. Each folder includes `SOURCE.md` (upstream URL and commit) and the upstream `LICENSE`. |
 | `clone-external.sh` | Clones the picks that can't be vendored (no license, AGPL/GPL, or too big) into `_external/`, which is gitignored. |
 | `install-skills.sh` | Symlinks the standalone vendored skills into `~/.claude/skills`. |
+| `prompts/opus-5-5-videos/` | 703 creator-shared prompts for motion graphics, explainers and 3D that Claude Opus 5.5 built as code ([yihui-dev/awesome-opus5-5-videos](https://github.com/yihui-dev/awesome-opus5-5-videos), MIT). |
+| `PLAYBOOK-open-edit-openmontage-opus.md` | How to combine open-edit, OpenMontage and the Opus prompts with the rest of the pipeline. |
 
 Vendored skills:
 
@@ -23,6 +25,7 @@ Vendored skills:
 | `skills/05-hyperframes-official` | [heygen-com/hyperframes](https://github.com/heygen-com/hyperframes) (62.6k stars, Apache-2.0) | Render engine skills, embedded-captions (text behind you, face safe zones), audio, media-use (SFX/BGM), motion graphics |
 | `skills/06-youtube-editor-audio-sfx/claude-youtube-editor` | [hassancs91/claude-youtube-editor](https://github.com/hassancs91/claude-youtube-editor) (MIT, by YouTuber Hasan Aboul Hasan) | clean-cut, clean-audio (denoise), suggest-sfx (shared SFX library), fake-screencast, thumbnails |
 | `skills/07-capture-and-utilities/digitalsamba-skills` | [digitalsamba/claude-code-video-toolkit](https://github.com/digitalsamba/claude-code-video-toolkit) (2.2k stars, MIT) | playwright-recording, ffmpeg, elevenlabs, moviepy |
+| `skills/08-render-any-html/open-edit` | [veedstudio/open-edit](https://github.com/veedstudio/open-edit) (1.6k stars, Apache-2.0) | Renders any HTML page to MP4 or alpha ProRes, `speech-probe` cut verification, EDL assembly, mixing, VEED editor hand-off |
 
 ## Verdict table (your 18 skills)
 
@@ -31,21 +34,21 @@ Vendored skills:
 | 1 | Watch | video-use | bsisduck/video-analyzer-skill | Vendored |
 | 2 | Visual understanding | Gemini video API + video-use `timeline_view`; TransNetV2 for shots | Qwen3-VL (local) | Vendored (skill) |
 | 3 | Audio analysis | ElevenLabs Scribe (paid) / WhisperX (local) + CrisperWhisper for fillers | faster-whisper, whisper.cpp | Engines linked |
-| 4 | Silence + repetition cutting | Nate's `cut-silences` + `cut-mistakes` | auto-editor (no AI, NLE export) | Vendored |
+| 4 | Silence + repetition cutting | Nate's `cut-silences` + `cut-mistakes`, cut points verified with open-edit `speech-probe` | auto-editor (no AI, NLE export) | Vendored |
 | 5 | Edit planning | Nate's `video-storytelling` + `hyperframes-video-beats` | OpenMontage pipelines | Vendored |
 | 6 | Rough cut + short-form cutaway | Nate's `short-form-edit` | ghost-editor, hassancs91 `clean-cut` | Vendored |
 | 7 | Air / fumble / repeat removal | Nate's `cut-mistakes` (review-gated) | ghost-editor take selection, vincentventalon keep-last-take | Vendored |
 | 8 | Cut auditing | krusemediallc `video-qa` (4 layers) | Nate's `qa-*.mjs` scripts, video-use self-check | Clone script / vendored |
-| 9 | Geometry (face, hands, key areas) | HyperFrames `embedded-captions` safe-zones + ghost-editor `face_track.py` | MediaPipe for hands | Vendored |
+| 9 | Geometry (face, hands, key areas) | HyperFrames `embedded-captions` safe-zones + ghost-editor `face_track.py` | OpenMontage `face_tracker` (head pose) + `auto_reframe`; MediaPipe for hands | Vendored / clone script |
 | 10 | Capture + recording | shot-scraper + `playwright-recording` | krusemediallc `broll-capture`, Cap | Vendored / linked |
-| 11 | B-roll understanding + tags | video-db/skills (hosted) / VideoSeek (local) | DIY: Qwen3-VL-Embedding or open_clip | Clone script |
+| 11 | B-roll understanding + tags | Own footage: video-db/skills (hosted) / VideoSeek (local). Stock: OpenMontage `corpus_builder` + `clip_search` | DIY: Qwen3-VL-Embedding or open_clip | Clone script |
 | 12 | Gen video (Flow, Veo 3.1) | GTAI-1/flow-mcp | Veo API via Gemini; Wan2.2/LTX-2 local | Clone script |
 | 13 | Rotoscopy | HyperFrames `embedded-captions` matte (skill); SAM 3 + MatAnyone 2 (engine) | RobustVideoMatting, CorridorKey | Vendored / clone script |
-| 14 | Style + motion graphics kit | Nate's `style-library` (406 cards) + HyperFrames registry | remotion-dev/skills | Vendored |
+| 14 | Style + motion graphics kit | Nate's `style-library` (406 cards) + HyperFrames registry + 703 Opus 5.5 prompts | remotion-dev/skills | Vendored |
 | 15 | Captions | HyperFrames `embedded-captions` | Remotion captions skill, pycaps | Vendored |
 | 16 | Sound effects | hassancs91 `suggest-sfx` + HyperFrames `media-use` | krusemediallc `sound-design`, MMAudio | Vendored |
-| 17 | Render | HyperFrames CLI + FFmpeg | Remotion | Vendored |
-| 18 | Review gate | krusemediallc `video-qa` + `video-review-canvas` | OpenMontage `reviewer.md` + checkpoint protocol | Clone script |
+| 17 | Render | HyperFrames CLI for compositions, open-edit `render` for any HTML and alpha overlays, FFmpeg for assembly | Remotion | Vendored |
+| 18 | Review gate | krusemediallc `video-qa` + `video-review-canvas`, judged with OpenMontage `reviewer.md` rules | OpenMontage checkpoint protocol | Clone script |
 
 ---
 
@@ -297,7 +300,7 @@ Others:
 | [hypit-ai/hypit](https://github.com/hypit-ai/hypit) | 21.9k | | Cloning viral video formats | |
 | [FireRed-OpenStoryline](https://github.com/FireRedTeam/FireRed-OpenStoryline) | 3.5k | Apache-2 | Intent-driven editing through an MCP/web UI | Chinese-first docs |
 | [chengfeng-videocut-skills](https://github.com/Agentchengfeng/chengfeng-videocut-skills) | 3.1k | Apache-2 | Very rigorous talking-head cutting (5-pass flub scan) | Chinese only |
-| [veedstudio/open-edit](https://github.com/veedstudio/open-edit) | 1.6k | Apache-2 | VEED's agent pipeline: subtitles, motion graphics, slides | macOS only |
+| [veedstudio/open-edit](https://github.com/veedstudio/open-edit) | 1.6k | Apache-2 | Renders any HTML page frame-accurately, alpha output, measured cut points, VEED hand-off | You want no VEED account (rendering and cutting still work without one) |
 | [nateherkai/hyperframes-student-kit](https://github.com/nateherkai/hyperframes-student-kit) | 1.4k | MIT | Talking-head to finished long and short form | |
 
 **Recommended stack for a talking-head editor:** Nate's kit (cut, plan, motion) + HyperFrames `embedded-captions` (captions, roto, face safety) + hassancs91 `clean-audio` / `suggest-sfx` (audio) + krusemediallc `video-qa` (review) + flow-mcp (generated shots).
@@ -310,6 +313,8 @@ Others:
 | [hetpatel-11/Adobe_Premiere_Pro_MCP](https://github.com/hetpatel-11/Adobe_Premiere_Pro_MCP) | 680 | Premiere Pro via MCP |
 | [AcademySoftwareFoundation/OpenTimelineIO](https://github.com/AcademySoftwareFoundation/OpenTimelineIO) | 2.0k | Timeline interchange format, so agent EDLs open in any NLE |
 | auto-editor | 5.5k | Silence cut exported as a Premiere, Resolve or FCP timeline |
+| open-edit `veed-project` / `veed-pull` | | Agent cut into VEED's editor as an editable project, and back |
+| open-edit `render --transparent` | | ProRes 4444 alpha overlays for any NLE |
 | krusemediallc `capcut-export` | | Hands the agent's cut off as a CapCut draft |
 
 ## Reference-style cloning (edit mine like this reel)
@@ -336,6 +341,9 @@ cd skills/06-youtube-editor-audio-sfx/claude-youtube-editor && pip install -r re
 
 # Picks that can't be vendored (unlicensed, AGPL/GPL, or engines)
 ./clone-external.sh
+
+# open-edit CLI (renderer, cut tools); the skill is in skills/08-render-any-html
+npx --yes @veedstudio/openedit-cli init --workspace .
 ```
 
 Most skills need `ffmpeg` and Node 22+. API keys are optional unless noted: ElevenLabs (video-use, Nate's default transcriber), Gemini (video-qa L3).
