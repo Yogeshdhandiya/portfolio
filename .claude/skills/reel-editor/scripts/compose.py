@@ -2,6 +2,8 @@
 # + rotoscoped "behind" layer + front overlay. Streams frames into ffmpeg (x264) with the audio mix.
 # Usage: compose.py <source> <plan.json> <front.mov> <behind.mov> <matte_dir> <mix.wav> <out.mp4> [crf]
 import sys, os, json, subprocess, numpy as np, cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from grade import grade
 
 src, plan_p, front_p, behind_p, matte_d, mix_p, out_p = sys.argv[1:8]
 crf = sys.argv[8] if len(sys.argv) > 8 else "16"
@@ -68,8 +70,7 @@ for i in range(N):
         base = np.clip(base, 0, 255).astype(np.uint8)
     else:
         base = warp(f, k, ax, ay)
-    base = cv2.LUT(base, LUT)
-    base = (base.astype(np.float32) * VIG + 0.5).astype(np.uint8)
+    base = grade(base)
     if br is not None and br[..., 3].any():
         mp = f"{matte_d}/m_{i:05d}.png"
         if os.path.exists(mp):

@@ -39,7 +39,8 @@ Built from real jobs for Yogesh (yog.visuals). It encodes his feedback, the refe
 - Centring: every group centred on x = 540. Building lines re-centre on visible words. Rows build centre-out.
 - Motion: everything is a pure function of t (`window.__seek`). Words blur-fade up (0.13 s). Emphasis scales from 1.16 to 1 with blur 12→0. Gold has a light sweep. Chips pop with overshoot, and the sparkle follows 0.12 s later. Phrases exit with a blur-fade (0.09 s).
 - Camera: framing changes only on the source's jump cuts. Eased (cubic) punch-ins of 0.3–1.1 s inside long shots. 2.2% drift per shot. Zoom-blur + RGB split on 2–3 cuts. Min zoom 1.06 so the face can stay centred.
-- Sound: never synthesize SFX. Never repeat the same file back to back. Peak-align whooshes and impacts to the cut. Cut impact tails at about 0.35 s. Use a steady music bed (`tech-pulse`) sidechain-ducked under the voice. Final -14 LUFS / -1 dBTP.
+- Sound: never synthesize SFX. **Key moments only (about 1 cue per 2.5 s)**, auto-levelled 9–13 dB under the voice. Never repeat the same file back to back. Peak-align whooshes to the cut. No long-swell files. Use a steady music bed (`tech-pulse`) sidechain-ducked under the voice. Final -14 LUFS / -1 dBTP.
+- Grade: always (`scripts/grade.py`). Blues shifted to teal and darkened, warm bright skin, teal shadows / warm highlights, crushed blacks, S-curve, vignette, grain. Approve a before/after strip next to a reference frame before compositing.
 
 ## Time budget seen on a 44 s reel (4 CPU container)
 Setup about 3 min · transcription 20 s · analysis 65 s · roto (44 frames) 80 s · overlay render 3.5 min · audio 80 s · composite 3.5 min · QA 1 min.
