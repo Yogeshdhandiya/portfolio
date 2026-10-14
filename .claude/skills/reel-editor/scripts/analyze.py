@@ -1,3 +1,4 @@
+import os
 # Per-frame analysis of a talking-head source: jump cuts, face box/chin, hand boxes.
 # Usage: analyze.py <video> <out.json> <models_dir>
 # Coordinates are normalized 0..1 in SOURCE frame space.
@@ -15,6 +16,12 @@ face = vision.FaceLandmarker.create_from_options(vision.FaceLandmarkerOptions(
 hand = vision.HandLandmarker.create_from_options(vision.HandLandmarkerOptions(
     base_options=mpt.BaseOptions(model_asset_path=f"{M}/hand_landmarker.task"), running_mode=vision.RunningMode.VIDEO, num_hands=2))
 p = subprocess.Popen(["ffmpeg", "-v", "error", "-i", src, "-vf", f"scale={W}:{H}", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
+# Wide shots: the face is too small at 540 px, so detect it on a high-res crop (FACE_CROP="x0,y0,x1,y1" normalised).
+FC = [float(v) for v in os.environ["FACE_CROP"].split(",")] if os.environ.get("FACE_CROP") else None
+if FC:
+    CW = 640; CH = int(CW * (FC[3] - FC[1]) * probe["height"] / ((FC[2] - FC[0]) * probe["width"])) // 2 * 2
+    pc = subprocess.Popen(["ffmpeg", "-v", "error", "-i", src, "-vf", f"crop=iw*{FC[2]-FC[0]}:ih*{FC[3]-FC[1]}:iw*{FC[0]}:ih*{FC[1]},scale={CW}:{CH}",
+                           "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
 frames, prev, i = [], None, 0
 CHIN, FOREHEAD = 152, 10
 while True:
@@ -24,9 +31,14 @@ while True:
     ts = int(i * 1000 / fps)
     mi = mp.Image(image_format=mp.ImageFormat.SRGB, data=img)
     rec = {"i": i, "t": round(i / fps, 4)}
-    fr = face.detect_for_video(mi, ts)
+    if FC:
+        cimg = np.frombuffer(pc.stdout.read(CW * CH * 3), np.uint8).reshape(CH, CW, 3)
+        fr = face.detect_for_video(mp.Image(image_format=mp.ImageFormat.SRGB, data=cimg), ts)
+    else:
+        fr = face.detect_for_video(mi, ts)
     if fr.face_landmarks:
         lm = np.array([[l.x, l.y] for l in fr.face_landmarks[0]])
+        if FC: lm = np.array([FC[0], FC[1]]) + lm * np.array([FC[2] - FC[0], FC[3] - FC[1]])
         x0, y0 = lm.min(0); x1, y1 = lm.max(0)
         h = y1 - y0
         rec["face"] = {"x0": float(x0), "y0": float(y0 - 0.35 * h), "x1": float(x1), "y1": float(y1),

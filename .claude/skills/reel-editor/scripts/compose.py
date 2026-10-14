@@ -8,7 +8,8 @@ from grade import grade
 src, plan_p, front_p, behind_p, matte_d, mix_p, out_p = sys.argv[1:8]
 crf = sys.argv[8] if len(sys.argv) > 8 else "16"
 P = json.load(open(plan_p)); FPS = P["fps"]; N = P["n"]
-PW, PH, OW, OH, TX, TY = 1296, 2304, 1080, 1920, 540, 790
+PRE = float(os.environ.get("PRESCALE", 1.2))  # raise for wide 4K sources so punch-ins up to PRE stay native
+PW, PH, OW, OH, TX, TY = int(1080 * PRE) // 2 * 2, int(1920 * PRE) // 2 * 2, 1080, 1920, 540, 790
 SRC_MATTE_W = 540  # matte pngs are 540 wide in source space
 
 def reader(path, w, h, ch, vf=None):

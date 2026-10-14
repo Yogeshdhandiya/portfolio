@@ -11,8 +11,8 @@ html,body{margin:0;background:transparent}
 .line{display:block;white-space:nowrap}
 .w{display:inline-block;white-space:pre}
 .plain{font:600 52px/1.1 Body;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.65),0 1px 3px rgba(0,0,0,.5)}
-.lead,.tail{font:600 42px/1.1 Body;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.6)}
-.big{font:400 150px/0.92 Big;color:#fff;letter-spacing:-0.01em;text-shadow:0 6px 26px rgba(0,0,0,.55)}
+.lead,.tail{font:600 42px/1.1 Body;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.55)}
+.big{font:400 150px/0.92 Big;color:#fff;letter-spacing:-0.01em;text-shadow:0 6px 26px rgba(0,0,0,.6),0 2px 6px rgba(0,0,0,.4)}
 .card{position:absolute;inset:0;background:#fff;overflow:hidden}
 .k{position:absolute;left:0;right:0;text-align:center}
 .klead{font:600 46px/1.1 Body;color:#111}
@@ -77,6 +77,8 @@ const cards=D.cards.map(c=>{const f=el('div','card');const o={c,f};
   o.revs=R.map((r,i)=>{const d=el('div','rev',`<div class=hd><div class=av style="background:${r[1]}">${r[0]}</div><div><div class=nm>${r[2]}</div><div class=sub>${r[3]}</div></div><div class=st>${r[4]}</div></div><div class=q>${r[5]}</div>`,f);d.style.top=(470+i*330)+'px';return d});
   o.big=el('div','k kbig',letters(c.big),f);o.big.style.top='1180px';o.big.style.fontSize='200px';
   o.tail=mkWords(f,'k ktail',c.tail,{top:'1390px'});Object.assign(o.tail.el.style,{position:'absolute',left:'0',right:'0'});
+ }else if(c.type==='rows'){
+  o.rows=c.rows.map((r,i)=>{const y=520+i*440;const L=mkWords(f,'k klead',r.lead,{top:y+'px'});Object.assign(L.el.style,{position:'absolute',left:'0',right:'0'});const b=el('div','k kbig',letters(r.big),f);b.style.top=(y+70)+'px';return {L,b,t:r.big_t}});
  }else if(c.type==='stack'){
   o.items=c.items.map(([txt,t],i)=>{const e=el('div','k kbig',letters(txt),f);e.style.top=(470+i*230)+'px';e.style.fontSize='210px';return {e,t}});
  }else if(c.type==='dm'){
@@ -89,7 +91,7 @@ const cards=D.cards.map(c=>{const f=el('div','card');const o={c,f};
  return o});
 
 function fitAll(){for(const o of phs){for(const L of o.lines){if(L.ws)measure(L);if(L.kind==='big'){L.el.style.fontSize='150px';const w=L.el.scrollWidth;if(w>960)L.el.style.fontSize=Math.floor(150*960/w)+'px'}}o.fit=true}
- for(const o of cards){for(const k of ['lead','tail'])if(o[k])measure(o[k])}}
+ for(const o of cards){for(const k of ['lead','tail'])if(o[k])measure(o[k]);if(o.rows)o.rows.forEach(r=>measure(r.L))}}
 let fitted=false;
 
 function draw(t){
@@ -108,6 +110,7 @@ function draw(t){
   if(c.type==='reviews'){buildWords(o.lead,t);o.revs.forEach((r,i)=>{const k=t-c.cards_t[i];show(r,k>=0);if(k>=0){r.style.opacity=cl(k/0.12);r.style.transform=`translateY(${60*(1-eo(k/0.3))}px)`;r.style.filter=k<0.2?`blur(${8*(1-eo(k/0.2))}px)`:'none'}
      const hl=r.querySelector('.hl');const kh=cl((t-c.big_t-0.05)/0.3);hl.style.backgroundImage=`linear-gradient(transparent 52%,rgba(255,214,0,.85) 52%)`;hl.style.backgroundSize=`${100*kh}% 100%`});
    const k=t-c.big_t;show(o.big,k>=0);if(k>=0)revealLetters(o.big,k,c.big_t);buildWords(o.tail,t)}
+  if(c.type==='rows'){o.rows.forEach((r,i)=>{buildWords(r.L,t);const k=t-r.t;show(r.b,k>=0);if(k>=0)revealLetters(r.b,k,r.t);const nx=o.rows[i+1];const past=nx&&t>=nx.L.ws[0].t;r.b.style.color=past?'#c9c9c9':'#0b0b0b';r.L.el.style.color=past?'#bbb':'#111'})}
   if(c.type==='stack'){o.items.forEach(({e,t:ti},i)=>{const k=t-ti;show(e,k>=0);if(k<0)return;revealLetters(e,k,ti);
     const nxt=o.items[i+1];const past=nxt&&t>=nxt.t;e.style.color=past?'#c9c9c9':'#0b0b0b'})}
   if(c.type==='dm'){buildWords(o.lead,t);const kd=t-c.a;o.dm.style.opacity=cl((kd-0.05)/0.15);o.dm.style.transform=`translateY(${50*(1-eo((kd-0.05)/0.35))}px)`;

@@ -36,3 +36,10 @@ Each one cost time once. Don't pay for it twice.
 - **Lead/tail lines under 48 px vanish at phone size.** Use 50 px lead/tail, 60 px plain, 120–170 px emphasis.
 - **Impact SFX tails mud up the low end.** Fade them out about 0.35 s after the hit and set them 4 dB under the whooshes. Check the mix spectrogram (`showspectrumpic`) against the reference.
 - Overlay QA (`qa.py`) checks caption alpha against the face box (brow to chin) on every frame, and the caption-band centroid. Run it on the overlay before the expensive composite.
+
+## Learned on job 3 (2026-10-14)
+- **Wide shots: FaceLandmarker finds 0 faces at 540 px** (face is about 50 px). Run `FACE_CROP=x0,y0,x1,y1 analyze.py ...` (normalised crop around the subject, decoded from the full-res source at 640 px wide); landmarks are mapped back to full-frame coordinates.
+- **Wide 4K source needs big punch-ins.** `compose.py` pre-scales to 1.2x output by default, so anything above z=1.2 goes soft. Set `PRESCALE=1.8` (or up to 2.0 for 4K) for BOTH `plan.py` and `compose.py`; they must match.
+- **Few real cuts:** add punch-in cuts on sentence boundaries (word gaps) and alternate the zoom on them. They read as jump cuts.
+- **White clothing behind captions:** use the double text-shadow (tight 1-3 px plus soft 12-26 px) already in `template_minimal.html`.
+- Junk frames at the tail show up as a burst of "cuts" in the last 0.6 s. Trim with `ffmpeg -t <end> -c copy` and set `N` in the plan.

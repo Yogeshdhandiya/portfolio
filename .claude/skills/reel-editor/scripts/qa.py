@@ -9,7 +9,7 @@ p = subprocess.Popen(["ffmpeg", "-v", "error", "-i", front_p, "-vf", "scale=540:
 coll, offc, i = [], [], 0
 while True:
     b = p.stdout.read(540 * 960 * 4)
-    if len(b) < 540 * 960 * 4: break
+    if len(b) < 540 * 960 * 4 or i >= len(P["cam"]): break
     a = np.frombuffer(b, np.uint8).reshape(960, 540, 4)[..., 3] > 60
     t = i / FPS
     if not inblock(t) and a.any():
