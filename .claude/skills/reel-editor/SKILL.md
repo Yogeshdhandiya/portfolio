@@ -10,7 +10,7 @@ Built from real jobs for Yogesh (yog.visuals). It encodes his feedback, the refe
 **Read first, every time:**
 1. `references/user-feedback.md`: hard rules from his reviews. Treat each as a failing test.
 2. `references/pitfalls.md`: environment and pipeline traps, with the fixes.
-3. Style files, one per reference he has used: `references/style-blue-glow.md` (heavy: glow captions, roto, image cards; overlay `templates/template.html`, `GRADE_PRESET=blueglow`) and `references/style-minimal-clean.md` (minimal: 1-2 word captions, condensed emphasis, white cutaway cards with blur dissolve; overlay `templates/template_minimal.html`, `GRADE_PRESET=neutral`). For a new reference, write a new style file the same way and add a grade preset in `scripts/grade.py`.
+3. Style files, one per reference he has used: `references/style-blue-glow.md` (heavy: glow captions, roto, image cards; overlay `templates/template.html`, `GRADE_PRESET=blueglow`) and `references/style-minimal-clean.md` (minimal: 1-2 word captions, condensed emphasis, white cutaway cards with blur dissolve; overlay `templates/template_minimal.html`). **Grade is always `GRADE_PRESET=blueglow`, whatever the reference's own grade** (his rule 14: it's his look across every reel). `neutral` exists only if he asks for it.
 4. `references/audit-checklist.md`: run it before delivering.
 
 ## Pipeline (scripts in `scripts/`, overlay in `templates/`)

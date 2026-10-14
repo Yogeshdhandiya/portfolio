@@ -3,7 +3,7 @@
 Frame-level breakdown (8 fps sheets of the hook, white cards, emphasis words, profile card, ending + spectrogram).
 
 ## Global
-- 9:16, 30 fps, -14.2 LUFS. Dark, neutral, desaturated talking head (black hoodie, dark slatted wall). Grade: cool-neutral, low saturation, deep blacks, natural skin.
+- 9:16, 30 fps, -14.2 LUFS. Dark, neutral, desaturated talking head (black hoodie, dark slatted wall). The reference's own grade is cool-neutral and desaturated, but **don't copy it: use the blue-glow grade** (user-feedback rule 14).
 - Camera: slow continuous push-in inside shots (about 4–6% per shot) plus a framing change on every jump cut. Opens tight and settles out on the first beat. No zoom-blur or RGB split.
 - Sound: a quiet music bed (gaps between words sit about 2–6 dB under speech level, which means a bed or room tone is present). Almost no audible SFX.
 
