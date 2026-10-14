@@ -7,22 +7,26 @@ DUR = P["n"] / P["fps"]
 cues = []  # (time, file, gain_db, semitones, align)
 def cue(t, f, g, st=0, align="onset"): cues.append((t, f, g, st, align))
 
-# --- SFX only on KEY moments (v3 rule: ~1 cue per 2.5 s, sitting well under the voice)
-cue(P["roto"]["a"], "typing.mp3", -12, 0, "peak")                    # roto text types on
-cue(P["tiles"]["a"], "pop.mp3", -13)                                  # tiles (one soft pop, not five)
-CARD_W = [("whoosh.mp3", -1), ("whoosh.mp3", 0), ("h_whoosh-soft.mp3", 0), ("whoosh-short.mp3", -2), ("h_whoosh-wind.mp3", 0)]
-for c, (wf, st) in zip(P["cards"], CARD_W):
-    cue(c["a"], wf, -9, st, "peak")                                   # card in: whoosh only
-cue(P["cards"][0]["a"], "h_impact-soft.mp3", -11)                     # one impact, first card only
-for tc, st in zip(P["zoom_transitions"], [2, 0, -1]):
-    cue(tc, "whoosh-short.mp3", -11, st, "peak")                      # zoom-blur cuts
-chips = [ph for ph in P["phrases"] if ph["style"] == "chip"]
-for ph, (f, st) in zip(chips, [("pop.mp3", 0), ("h_ui-toggle-on.mp3", 0), ("pop.mp3", 3)]):
-    em = [L for L in ph["lines"] if L["kind"] == "emph"][0]
-    cue(em["words"][0]["t"], f, -13, st)                              # chips
-cue(27.40, "glitch-3.mp3", -13)                                       # "get lost faster" scramble
-cue(P["loop"]["a"], "h_riser-soft.mp3", -12, 0, "peak")               # into the loop card
-cue(41.70, "h_impact-deep-soft.mp3", -11)                       # CTA "BUILD"
+# plan-driven cue sheet wins when present: plan['sfx'] = [[t, file, rel_dB, semitones, align], ...]
+if "sfx" in P:
+    cues = [tuple(x) for x in P["sfx"]]
+else:  # legacy job-1 cue logic
+    # --- SFX only on KEY moments (v3 rule: ~1 cue per 2.5 s, sitting well under the voice)
+    cue(P["roto"]["a"], "typing.mp3", -12, 0, "peak")                    # roto text types on
+    cue(P["tiles"]["a"], "pop.mp3", -13)                                  # tiles (one soft pop, not five)
+    CARD_W = [("whoosh.mp3", -1), ("whoosh.mp3", 0), ("h_whoosh-soft.mp3", 0), ("whoosh-short.mp3", -2), ("h_whoosh-wind.mp3", 0)]
+    for c, (wf, st) in zip(P["cards"], CARD_W):
+        cue(c["a"], wf, -9, st, "peak")                                   # card in: whoosh only
+    cue(P["cards"][0]["a"], "h_impact-soft.mp3", -11)                     # one impact, first card only
+    for tc, st in zip(P["zoom_transitions"], [2, 0, -1]):
+        cue(tc, "whoosh-short.mp3", -11, st, "peak")                      # zoom-blur cuts
+    chips = [ph for ph in P["phrases"] if ph["style"] == "chip"]
+    for ph, (f, st) in zip(chips, [("pop.mp3", 0), ("h_ui-toggle-on.mp3", 0), ("pop.mp3", 3)]):
+        em = [L for L in ph["lines"] if L["kind"] == "emph"][0]
+        cue(em["words"][0]["t"], f, -13, st)                              # chips
+    cue(27.40, "glitch-3.mp3", -13)                                       # "get lost faster" scramble
+    cue(P["loop"]["a"], "h_riser-soft.mp3", -12, 0, "peak")               # into the loop card
+    cue(41.70, "h_impact-deep-soft.mp3", -11)                       # CTA "BUILD"
 
 # auto-level: each cue's loudest 0.4 s window lands at (voice speech level + rel_dB), rel_dB <= -9
 import numpy as np
@@ -55,9 +59,10 @@ subprocess.run(["ffmpeg", "-v", "error", "-y", *ins, "-filter_complex", ";".join
 json.dump([dict(t=t, file=f, gain=g, semitones=st, align=al) for t, f, g, st, al in cues], open("sfx_cues.json", "w"), indent=0)
 
 # voice + music (ducked) + sfx
-MUSIC = f"{A}/music/tech-pulse.mp3"
+MUSIC = f"{A}/music/" + P.get("music", "tech-pulse.mp3")
+MUSIC_DB = P.get("music_db", -17)
 F = ("[0:a]highpass=f=80,acompressor=threshold=-20dB:ratio=3:attack=5:release=120:makeup=3dB,asplit=2[v][vk];"
-     f"[1:a]atrim=0:{DUR},afade=t=in:d=0.4,afade=t=out:st={DUR - 1.4}:d=1.4,volume=-17dB[m];"
+     f"[1:a]atrim=0:{DUR},afade=t=in:d=0.4,afade=t=out:st={DUR - 1.4}:d=1.4,volume={MUSIC_DB}dB[m];"
      "[m][vk]sidechaincompress=threshold=0.03:ratio=5:attack=25:release=350[md];"
      "[2:a]volume=0dB[s];[v][md][s]amix=inputs=3:normalize=0:duration=first")
 meas = subprocess.run(["ffmpeg", "-hide_banner", "-i", src, "-i", MUSIC, "-i", "sfx_stem.wav", "-filter_complex", F + ",loudnorm=I=-14:TP=-1:LRA=9:print_format=json", "-f", "null", "-"],

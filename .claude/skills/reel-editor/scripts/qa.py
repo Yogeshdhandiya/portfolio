@@ -3,7 +3,7 @@
 import sys, json, subprocess, numpy as np, re
 plan_p, front_p, final_p = sys.argv[1:4]
 P = json.load(open(plan_p)); FPS = P["fps"]; OW, OH = 1080, 1920
-blocks = [(c["a"], c["b"]) for c in P["cards"]] + [(P["loop"]["a"], P["loop"]["b"])]
+blocks = [(c["a"] - 0.15, c["b"] + 0.15) for c in P["cards"]] + [(P["loop"]["a"], P["loop"]["b"])]  # include dissolve margins
 inblock = lambda t: any(a <= t < b for a, b in blocks)
 p = subprocess.Popen(["ffmpeg", "-v", "error", "-i", front_p, "-vf", "scale=540:960", "-f", "rawvideo", "-pix_fmt", "rgba", "-"], stdout=subprocess.PIPE)
 coll, offc, i = [], [], 0
@@ -30,7 +30,7 @@ print(f"caption/face collisions: {len(coll)} frames", coll[:20])
 print(f"off-centre caption-band frames (>30px): {len(offc)}", offc[:20])
 r = subprocess.run(["ffmpeg", "-hide_banner", "-i", final_p, "-vf", "blackdetect=d=0.08:pix_th=0.08,freezedetect=n=0.002:d=0.6", "-af", "ebur128=peak=true", "-f", "null", "-"], capture_output=True, text=True).stderr
 print("black:", re.findall(r"black_start:[\d.]+ black_end:[\d.]+", r))
-print("freeze:", re.findall(r"freeze_start: [\d.]+", r))
+print("freeze (outside cards):", [f for f in re.findall(r"freeze_start: ([\d.]+)", r) if not inblock(float(f))])
 print("loudness:", re.findall(r"I:\s+(-?[\d.]+) LUFS", r)[-1:], "peak:", re.findall(r"Peak:\s+(-?[\d.]+) dBFS", r)[-1:])
 pr = json.loads(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "stream=codec_type,duration,width,height,r_frame_rate", "-of", "json", final_p]))
 print("streams:", [(s["codec_type"], s.get("width"), s.get("height"), s.get("duration")) for s in pr["streams"]])

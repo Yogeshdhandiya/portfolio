@@ -10,7 +10,7 @@ Built from real jobs for Yogesh (yog.visuals). It encodes his feedback, the refe
 **Read first, every time:**
 1. `references/user-feedback.md`: hard rules from his reviews. Treat each as a failing test.
 2. `references/pitfalls.md`: environment and pipeline traps, with the fixes.
-3. `references/style-blue-glow.md`: the reference style he wants (if the new reference is different, write a new style file the same way).
+3. Style files, one per reference he has used: `references/style-blue-glow.md` (heavy: glow captions, roto, image cards; overlay `templates/template.html`, `GRADE_PRESET=blueglow`) and `references/style-minimal-clean.md` (minimal: 1-2 word captions, condensed emphasis, white cutaway cards with blur dissolve; overlay `templates/template_minimal.html`, `GRADE_PRESET=neutral`). For a new reference, write a new style file the same way and add a grade preset in `scripts/grade.py`.
 4. `references/audit-checklist.md`: run it before delivering.
 
 ## Pipeline (scripts in `scripts/`, overlay in `templates/`)
@@ -26,8 +26,8 @@ Built from real jobs for Yogesh (yog.visuals). It encodes his feedback, the refe
 | 6 | Rotoscope the frames where text goes behind the subject | `python3 -I scripts/roto_fast.py footage.mp4 matte $W/models/u2net_human_seg.onnx 1.25:3.10` |
 | 7 | Overlay layers (front = captions/cards/tiles/loop; behind = roto text), rendered with alpha | `python3 templates/gen.py` then `npx @veedstudio/openedit-cli render front.html --out front.mov --fps 24000/1001 --duration <d> --transparent --workers 4` (same for behind.html over its range) |
 | 8 | QA the overlay before compositing: caption/face collisions, centring | `python3 -I scripts/qa.py plan.json front.mov <any.mp4>` |
-| 9 | Sound: cue sheet (varied, peak-aligned), music bed ducked under the voice, 2-pass loudnorm -14 LUFS | `python3 -I scripts/audio.py footage.mp4 plan.json $W/assets mix.wav` |
-| 10 | Composite: face-anchored sub-pixel reframe, zoom-blur + RGB split, grade, roto, overlay, encode | `python3 -I scripts/compose.py footage.mp4 plan.json front.mov behind.mov matte mix.wav master.mp4 16` |
+| 9 | Sound: cue sheet (put it in `plan['sfx']` as [t, file, rel_dB, semitones, align]; `plan['music']`, `plan['music_db']`), music bed ducked under the voice, 2-pass loudnorm -14 LUFS | `python3 -I scripts/audio.py footage.mp4 plan.json $W/assets mix.wav` |
+| 10 | Composite: face-anchored sub-pixel reframe, zoom-blur + RGB split (`cam.blur`), blur dissolve (`cam.gblur`), grade (`GRADE_PRESET`), roto, overlay, encode | `python3 -I scripts/compose.py footage.mp4 plan.json front.mov behind.mov matte mix.wav master.mp4 16` |
 | 11 | QA the final + contact sheet; fix and re-run what failed | `python3 -I scripts/qa.py ...` + `ffmpeg ... tile=8x3` |
 | 12 | Deliver: SendUserFile limit 30 MB, so make a 2-pass export at about 4.8 Mbps video + 192k AAC | see `references/pitfalls.md` |
 | 13 | **Update this skill**: new feedback goes to user-feedback.md, new traps to pitfalls.md, script fixes to scripts/ | always |

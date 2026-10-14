@@ -3,20 +3,29 @@
 # Colour math is baked once into a 7-bit 3D LUT (128^3), so a 1080x1920 frame grades in ~60 ms.
 import numpy as np, cv2
 
+import os
+PRESETS = {
+    # reference "blue glow": purple-blue light -> deep teal, warm skin, split tone
+    "blueglow": dict(hshift=30, bsat=0.12, bval=0.42, gsat=0.95, skin_s=0.06, skin_v=0.07, sh=(-0.030, 0.014, 0.028), hi=(0.035, 0.010, -0.030), crush=0.03, curve=0.20),
+    # reference "minimal clean": neutral, desaturated, coloured light killed, natural skin
+    "neutral": dict(hshift=0, bsat=0.78, bval=0.68, gsat=0.78, skin_s=0.05, skin_v=0.16, sh=(-0.004, 0.0, 0.006), hi=(0.014, 0.006, -0.010), crush=0.05, curve=0.26, gamma=1.18),
+}
+PR = PRESETS[os.environ.get("GRADE_PRESET", "blueglow")]
+
 def _colour(x):  # x: (...,3) float RGB 0..1
     hsv = cv2.cvtColor(x.reshape(-1, 1, 3).astype(np.float32), cv2.COLOR_RGB2HSV).reshape(x.shape)
     h, s, v = hsv[..., 0], hsv[..., 1], hsv[..., 2]
     blue = np.clip(1 - np.abs(h - 235) / 50, 0, 1) * np.clip(s * 1.6, 0, 1)
     skin = np.clip(1 - np.abs(((h + 180) % 360) - 203) / 28, 0, 1) * np.clip(s * 3, 0, 1)
-    h = h - 30 * blue                                  # purple-blue -> teal-blue
-    s = s * (0.95 - 0.12 * blue + 0.06 * skin)
-    v = v * (1 - 0.42 * blue) * (1 + 0.07 * skin)      # deep dark walls, brighter skin
+    h = h - PR["hshift"] * blue                        # e.g. purple-blue -> teal-blue
+    s = s * (PR["gsat"] - PR["bsat"] * blue + PR["skin_s"] * skin)
+    v = v * (1 - PR["bval"] * blue) * (1 + PR["skin_v"] * skin)
     hsv = np.stack([np.mod(h, 360), np.clip(s, 0, 1), np.clip(v, 0, 1)], -1)
     x = cv2.cvtColor(hsv.reshape(-1, 1, 3).astype(np.float32), cv2.COLOR_HSV2RGB).reshape(x.shape)
     y = (0.2126 * x[..., 0] + 0.7152 * x[..., 1] + 0.0722 * x[..., 2])[..., None]
-    x = x + (1 - y) ** 2 * np.float32([-0.030, 0.014, 0.028]) + y ** 2 * np.float32([0.035, 0.010, -0.030])
-    x = np.clip((x - 0.03) / 0.97, 0, 1)
-    x = x + 0.20 * (x - 0.5) * (x * (1 - x)) * 4 * 0.5   # S-curve
+    x = x + (1 - y) ** 2 * np.float32(PR["sh"]) + y ** 2 * np.float32(PR["hi"])
+    x = np.clip((x - PR["crush"]) / (1 - PR["crush"]), 0, 1) ** PR.get("gamma", 1.0)
+    x = x + PR["curve"] * (x - 0.5) * (x * (1 - x)) * 4 * 0.5   # S-curve
     return np.clip(x, 0, 1)
 
 _l = (np.arange(128, dtype=np.float32) * 2 + 1) / 255

@@ -1,0 +1,44 @@
+[
+{
+"t": 6.089,
+"file": "h_whoosh-soft.mp3",
+"gain": -17.4,
+"semitones": 0,
+"align": "peak"
+},
+{
+"t": 13.597,
+"file": "whoosh-short.mp3",
+"gain": -20.4,
+"semitones": -2,
+"align": "peak"
+},
+{
+"t": 21.73,
+"file": "h_whoosh-soft.mp3",
+"gain": -17.4,
+"semitones": 2,
+"align": "peak"
+},
+{
+"t": 28.3,
+"file": "whoosh-short.mp3",
+"gain": -20.4,
+"semitones": 0,
+"align": "peak"
+},
+{
+"t": 14.16,
+"file": "h_page-flip.mp3",
+"gain": -15.1,
+"semitones": 0,
+"align": "onset"
+},
+{
+"t": 29.28,
+"file": "h_ui-send.mp3",
+"gain": -3.7,
+"semitones": 0,
+"align": "onset"
+}
+]

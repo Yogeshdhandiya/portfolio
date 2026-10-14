@@ -25,5 +25,8 @@ Every item came from a real review. Treat each one as a failing test.
 | 12 | Too many SFX, and too loud | **SFX on key moments only: about 1 cue per 2.5 s** (v3: 17 cues in 44 s; v2 had 55). Use them on card-ins (whoosh only, one impact on the first card), zoom-blur cuts, chips, the one scramble, the riser into the loop, the CTA. **No SFX on every emphasis word**, no label clicks, no card-out swishes, no tension beds. Levels are auto-set in `audio.py`: each cue's loudest 0.4 s window sits **9–13 dB under the voice speech level**. QA checks that no SFX window gets closer than -6 dB to the voice. Avoid long-swell files (impact-bass-2, whoosh-cinematic) because the swell sits on the voice for 2 s. |
 | 13 | Forgot to colour grade (v2's grade was too subtle to see) | Always grade the base with `scripts/grade.py` and show a before/after strip next to a reference frame before compositing. Look for the reference: saturated purple-blue light shifted toward teal (-30° hue on blues), blues darkened (-42% value) and desaturated a little, skin warmed and brightened, teal shadows / warm highlights, crushed blacks, S-curve, strong vignette, fine grain. It's baked into a 128³ LUT (about 180 ms/frame). |
 
+## Job 2 (minimal style) delivered 2026-10-14, awaiting feedback
+Log notes on it here.
+
 ## Round 3: v3 delivered 2026-10-13, awaiting feedback
 Log his next notes here as Round 3 and turn each one into a rule.

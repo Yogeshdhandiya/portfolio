@@ -71,6 +71,9 @@ for i in range(N):
     else:
         base = warp(f, k, ax, ay)
     base = grade(base)
+    gb = c.get("gblur", 0)
+    if gb > 0.01:
+        base = cv2.GaussianBlur(base, (0, 0), 2 + 30 * gb ** 1.4)
     if br is not None and br[..., 3].any():
         mp = f"{matte_d}/m_{i:05d}.png"
         if os.path.exists(mp):
