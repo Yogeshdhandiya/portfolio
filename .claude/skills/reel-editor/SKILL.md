@@ -13,6 +13,8 @@ Built from real jobs for Yogesh (yog.visuals). It encodes his feedback, the refe
 3. Style files, one per reference he has used: `references/style-blue-glow.md` (heavy: glow captions, roto, image cards; overlay `templates/template.html`, `GRADE_PRESET=blueglow`) and `references/style-minimal-clean.md` (minimal: 1-2 word captions, condensed emphasis, white cutaway cards with blur dissolve; overlay `templates/template_minimal.html`). **Grade is always `GRADE_PRESET=blueglow`, whatever the reference's own grade** (his rule 14: it's his look across every reel). `neutral` exists only if he asks for it.
 4. `references/audit-checklist.md`: run it before delivering.
 
+**Minimal Clean + motion graphics (current default).** Write a short `plan.py` spec (CUTS, CARDS, EMPH, MG, SFX) that calls `scripts/planlib.py` (see `examples/2026-10-16-batch-4-reels-mg/`), then `python3 templates/gen_mg.py plan.json overlay <fonts> <mg_assets>`, preview with `node templates/preview.js overlay/front.html pv/p.png <t...>`, and run everything else with `ASSETS=<sfx+music dir> bash scripts/run_minimal.sh <vdir> <duration> <prescale> <out.mp4>` (render, mix, composite with blue-glow, 30 MB export, QA, contact sheet). Every reel needs on-screen motion graphics (rule 15).
+
 **Low-credit mode (he asked for it).** Same reference as a past job: skip the breakdown, copy that job's `plan.py` and template, only rewrite the cut list, cards, emphasis and SFX. Look at no more than 3 images (one grade strip, one final contact sheet). Run long steps in the background and don't poll them.
 
 ## Pipeline (scripts in `scripts/`, overlay in `templates/`)

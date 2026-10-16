@@ -31,5 +31,12 @@ Every item came from a real review. Treat each one as a failing test.
 |---|---|---|
 | 14 | "Keep the colour grading as the video you edited previously, other than that everything's perfect" | **The blue-glow grade is his house look on every reel**, even when the reference is graded differently. Copy the reference's captions, cards, motion and sound, never its colour. Default `GRADE_PRESET=blueglow`. Everything else in the minimal job (1-2 word captions, condensed emphasis, white cards with blur dissolve, 6 soft SFX, docu-pluck bed) was approved as is. |
 
+## Job 3 → batch (2026-10-16)
+
+| # | Feedback | Rule going forward |
+|---|---|---|
+| 15 | "In the last edit you didn't create any motion graphics... motion graphics are important, and on-screen motion graphics are also important. Other than that the editing style is good." | **Every reel needs on-screen motion graphics over the talking head, not only text and white cards.** Target one MG every 4-6 s (34 s reel: 6 MGs + 2 cards; 66 s reel: 12-18 MGs + 3 cards). Use the `mg.js` layer: icon rows for lists of things, number badges for listicles, count-up ring for percentages, counters for numbers/years, bars for "this vs that", chips for 2-4 short points, notifications for results/comments, follow pill for the CTA, hero 3D icon for single concepts. White cards get motion too (`flow` pipeline, `grid` of clips, `rows`, `stack`, `dm`). The camera eases the face down while a top graphic is up (`lift`) so graphics never touch the head. |
+| 16 | "Do it one by one... I'm going to sleep, decide everything yourself. Make the videos better, and a good colour grade is needed." | Batch jobs: deliver each video as soon as it passes QA, then start the next. Never stop to ask. Blue-glow grade stays (rule 14). |
+
 ## Round 3: v3 delivered 2026-10-13, awaiting feedback
 Log his next notes here as Round 3 and turn each one into a rule.

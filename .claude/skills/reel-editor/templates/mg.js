@@ -38,7 +38,7 @@ mgCss.textContent = `
 .gt b{position:absolute;right:12px;bottom:10px;font:600 24px Body;color:#fff;background:rgba(0,0,0,.45);padding:2px 10px;border-radius:10px;letter-spacing:0}
 .fn{position:absolute;left:150px;width:780px;height:180px;border-radius:40px;border:5px solid #e6e6e6;box-sizing:border-box;display:flex;align-items:center;gap:34px;padding:0 44px;background:#fff}
 .fn img{width:110px;height:110px}
-.fn span{font:400 112px/1 Big;color:#cfcfcf;letter-spacing:0}
+.fn span{font:400 112px/1 Big;color:#cfcfcf;letter-spacing:0;white-space:nowrap}
 .fl{position:absolute;left:536px;width:8px;background:#111;border-radius:4px}
 `;
 document.head.appendChild(mgCss);
@@ -99,7 +99,8 @@ const XC = cards.filter(o => o.c.type === 'grid' || o.c.type === 'flow').map(o =
     const n = c.items.length, h = n > 4 ? 150 : 180, gap = n > 4 ? 44 : 70; o.gap = gap;
     const y0 = Math.max(430, 1010 - (n * h + (n - 1) * gap) / 2);
     o.nodes = c.items.map(([label, icon, t], i) => { const y = y0 + i * (h + gap); const e = el('div', 'fn', `<img src="${IMG(icon)}"><span>${label}</span>`, f); e.style.top = y + 'px';
-      if (n > 4) { e.style.height = h + 'px'; e.querySelector('span').style.fontSize = '92px'; e.querySelector('img').style.width = e.querySelector('img').style.height = '92px' }
+      if (n > 4) { e.style.height = h + 'px'; e.querySelector('img').style.width = e.querySelector('img').style.height = '92px' }
+      const base = n > 4 ? 92 : 112, maxLen = Math.max(...c.items.map(x => x[0].length)); e.querySelector('span').style.fontSize = Math.min(base, Math.floor(540 / (0.42 * maxLen))) + 'px';
       let ln = null; if (i) { ln = el('div', 'fl', null, f); ln.style.top = (y - gap) + 'px'; ln.style.height = '0px' } return { e, ln, t, img: e.querySelector('img'), sp: e.querySelector('span') } });
   }
   return o;

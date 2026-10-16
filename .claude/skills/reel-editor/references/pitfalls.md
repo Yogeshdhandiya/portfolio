@@ -43,3 +43,11 @@ Each one cost time once. Don't pay for it twice.
 - **Few real cuts:** add punch-in cuts on sentence boundaries (word gaps) and alternate the zoom on them. They read as jump cuts.
 - **White clothing behind captions:** use the double text-shadow (tight 1-3 px plus soft 12-26 px) already in `template_minimal.html`.
 - Junk frames at the tail show up as a burst of "cuts" in the last 0.6 s. Trim with `ffmpeg -t <end> -c copy` and set `N` in the plan.
+
+## Learned on the 4-reel batch (2026-10-16)
+- **SendUserFile is 30 MB:** a 67 s reel at 5.2 Mbps is 45 MB. `run_minimal.sh` sets the video bitrate to `min(5200, 28.5 MB*8/duration - 160k)`.
+- **CSS class clash:** naming an MG container class `ring` picked up the template's 92 px avatar `.ring` style. MG containers use `mg mg-<type>`.
+- **Fluent emoji names 404 sometimes** (`Direct hit` is not there, use `bullseye`). Check every `f:` icon exists in the assets dir before rendering; `gen_mg.py` reports missing ones.
+- **`set -e` + a broken `$(python3 -c ...)` kills the whole run instantly.** Test one-liners before putting them in a pipeline script.
+- **Preview before rendering:** `node templates/preview.js front.html out.png t1 t2 ...` screenshots the overlay at given times in seconds, which catches layout bugs before a 4-15 minute render.
+- Single-take footage (no jump cuts): put punch-in cuts on sentence boundaries every 2-3.5 s and merge the few real cuts `analyze.py` finds.

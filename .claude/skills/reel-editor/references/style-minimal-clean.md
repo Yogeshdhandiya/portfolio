@@ -20,3 +20,10 @@ Frame-level breakdown (8 fps sheets of the hook, white cards, emphasis words, pr
   - a big black condensed headline reveals **letter by letter with blur** ("CONTEXTUAL / TARGETING"), with a small tail ("and it uses...");
   - UI mockups: testimonial/review cards (avatar, name, stars, quote) on white with soft shadow; an Instagram-style dark profile pill (avatar with gradient ring, follower counts) with a blue **Follow** button that flips to grey **Following**, and a red notification badge counting up.
 - About 4–5 white segments per minute, 1–5 s each.
+
+## On-screen motion graphics (added after rule 15)
+Placed in the band between the Instagram header (y 150) and the top of the head; `planlib.py` computes `y`/`s` per graphic and lifts the face by 130 px while one is up.
+- Look: white rounded tiles (radius 38) with soft dark shadows, Microsoft Fluent 3D emoji or brand logos (simple-icons, brand colours), Poppins labels with a dark text shadow, white pills for labels, accent `#FFC83D` (yellow) for progress fills and number badges (it pops against the blue-glow walls).
+- Motion: pop with overshoot (scale 0.3-0.4 → 1, `eb`, 0.32-0.42 s), labels slide up 0.1 s later, items of a row arrive on their spoken word and the row re-centres as it grows, exits blur-fade in 0.18 s. Hero icons float (±6 px, ±2°).
+- Types in `templates/mg.js`: `hero`, `icons`, `ring`, `counter`, `badge`, `bars`, `chips`, `notif`, `follow`; card types `grid`, `flow` (auto-sizes up to 6 nodes and fits labels).
+- SFX for MGs: soft pops (pop.mp3 / h_pop-reveal.mp3 alternating, pitched up along a row) at -17/-18 dB, a tick for counters, ui-send for notifications and the follow tap. Never one pop per item on rows of 5: first, middle, last.
