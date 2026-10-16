@@ -105,7 +105,8 @@ class Job:
             i0, i1 = self.fr(p["t0"]), min(self.fr(p["t1"]) + 1, N)
             chins = [cam[i]["chin_out"] for i in range(i0, i1) if "chin_out" in cam[i]]
             p["y"] = int(min(max(max(chins) + 70 if chins else 1100, 1040), 1320))
-        warn = []
+        warn = [f'caption @{p["t0"]:.2f} clamped above the chin (he leans in?): drop or move it' for p in phrases
+                if any(cam[i].get("chin_out", 0) + 40 > p["y"] for i in range(self.fr(p["t0"]), min(self.fr(p["t1"]) + 1, N)))]
         for m in mg:  # place each top graphic in the band between the IG header and the top of the head
             i0, i1 = self.fr(m["t0"]), min(self.fr(m["t1"]) + 1, N)
             tops = [cam[i]["face_out"][1] for i in range(i0, i1) if "face_out" in cam[i]]

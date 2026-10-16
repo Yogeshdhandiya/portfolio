@@ -51,3 +51,5 @@ Each one cost time once. Don't pay for it twice.
 - **`set -e` + a broken `$(python3 -c ...)` kills the whole run instantly.** Test one-liners before putting them in a pipeline script.
 - **Preview before rendering:** `node templates/preview.js front.html out.png t1 t2 ...` screenshots the overlay at given times in seconds, which catches layout bugs before a 4-15 minute render.
 - Single-take footage (no jump cuts): put punch-in cuts on sentence boundaries every 2-3.5 s and merge the few real cuts `analyze.py` finds.
+- **Leaning in at the end:** on a sign-off ("bye-bye") he moves toward the lens, the chin drops below the 1320 caption clamp and the caption touches the face. `planlib` now warns; drop the sign-off caption or move it.
+- **`pgrep -f`/`pkill -f` with a bracketed pattern still self-matches** when the plain word appears elsewhere in the same command (e.g. `[r]erun.sh` plus `bash rerun.sh` later in the line). It killed the tool shell (exit 144) and left the renderer orphaned. Look up PIDs with `ps aux | grep` in one call, then `kill <pid>` in a separate call.

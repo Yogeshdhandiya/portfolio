@@ -2,7 +2,7 @@
 import sys; sys.path.insert(0, "/home/user/portfolio/.claude/skills/reel-editor/scripts")
 from planlib import Job
 J = Job("analysis.json", "src/src.words.json", end=58.50,
-        fixes={20.24: "help", 39.44: "experience", 40.24: "becomes", 58.08: "bye-bye."})
+        fixes={20.24: "help", 39.44: "experience", 40.24: "becomes", 58.08: ""})
 lw = J.lw
 CUTS = [1.18, 3.98, 6.52, 8.70, 10.54, 13.00, 16.90, 19.18, 22.44, 24.30, 26.70, 30.00, 30.70, 33.18, 38.62, 41.08, 43.58,
         46.62, 49.66, 52.04, 54.38, 56.14, 58.10]
@@ -63,3 +63,8 @@ SFX = [
     [56.34, "pop.mp3", -14, 0, "onset"],
 ]
 J.build(CUTS, CARDS, EMPH, MG, SFX, zooms=(1.2, 1.06), hook=(1.34, 1.06))
+# he leans into the lens after the last cut: nothing captioned after 58.10
+import json
+P = json.load(open("plan.json"))
+for p in P["phrases"]: p["t1"] = min(p["t1"], 58.10)
+json.dump(P, open("plan.json", "w"))
